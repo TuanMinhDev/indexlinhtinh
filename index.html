@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Heart Animation</title>
@@ -15,13 +15,12 @@
         font-size: 20vh;
         position: absolute;
         margin: 10;
-        /*bottom: 0;*/
         color: #fc0;
         -webkit-text-stroke: 0.15vh #c0f;
       }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div id="word"></div>
     <script type="module">
         import * as THREE from "https://cdn.skypack.dev/three@0.136.0";
@@ -118,7 +117,7 @@
               transformed += vec3(cos(moveS) * sin(moveT), cos(moveT), sin(moveS) * sin(moveT)) * shift.w;
             `
               );
-            shader.fragmentShader = `
+            shader.fragmentShader = ` 
             varying vec3 vColor;
             ${shader.fragmentShader}
           `
@@ -139,6 +138,15 @@
         p.rotation.order = "ZYX";
         p.rotation.z = 0.2;
         scene.add(p);
+
+        // Add sphere with image texture
+        const textureLoader = new THREE.TextureLoader();
+        const texture = textureLoader.load('z5828055810336_ef3f7251d42bdff04409862170b162b3.jpg');
+        const sphereGeometry = new THREE.SphereGeometry(5, 32, 32); // Adjust the size as needed
+        const sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+        sphere.position.set(0, 0, 0); // Adjust position as needed
+        scene.add(sphere);
       
         let clock = new THREE.Clock();
       
@@ -149,7 +157,6 @@
           p.rotation.y = t * 0.05;
           renderer.render(scene, camera);
         });
-      </script>
-      
-  </body>
+    </script>
+</body>
 </html>
