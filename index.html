@@ -3,52 +3,66 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Heart Animation</title>
+    <title>3D Cube with Galaxy Effect</title>
     <style>
-      @import "https://fonts.googleapis.com/css2?family=Megrim&display=swap";
       body {
         overflow: hidden;
         margin: 0;
       }
-      #word {
-        font-family: Megrim, cursive;
-        font-size: 20vh;
-        position: absolute;
-        margin: 10;
-        color: #fc0;
-        -webkit-text-stroke: 0.15vh #c0f;
-      }
     </style>
 </head>
 <body>
-    <div id="word"></div>
     <script type="module">
         import * as THREE from "https://cdn.skypack.dev/three@0.136.0";
         import { OrbitControls } from "https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls";
-      
-        console.clear();
-      
+
         let scene = new THREE.Scene();
         scene.background = new THREE.Color(0x160016);
+
         let camera = new THREE.PerspectiveCamera(60, innerWidth / innerHeight, 1, 1000);
         camera.position.set(0, 4, 21);
+
         let renderer = new THREE.WebGLRenderer();
         renderer.setSize(innerWidth, innerHeight);
         document.body.appendChild(renderer.domElement);
-        window.addEventListener("resize", (event) => {
+
+        window.addEventListener("resize", () => {
           camera.aspect = innerWidth / innerHeight;
           camera.updateProjectionMatrix();
           renderer.setSize(innerWidth, innerHeight);
         });
-      
+
         let controls = new OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.enablePan = false;
-      
+
+        // Cube with images
+        const textureLoader = new THREE.TextureLoader();
+        const imageUrls = [
+          'https://scontent.fhan14-5.fna.fbcdn.net/v/t39.30808-6/393200555_1009318737001317_7056760070168639969_n.jpg?stp=c0.169.1535.1535a_cp6_dst-jpg_s206x206&_nc_cat=106&ccb=1-7&_nc_sid=50ad20&_nc_ohc=0nnbthx5nycQ7kNvgHclR-e&_nc_ht=scontent.fhan14-5.fna&_nc_gid=AxkMZnXA08nekUbAo03tnCx&oh=00_AYBEyWRnlRjvu7IF2hb-SwkFeeXDIEsRlMDGNks1PkYfCg&oe=66EA1867',
+          'https://scontent.fhan14-1.fna.fbcdn.net/v/t39.30808-6/399507744_1021306332469224_3458684242560134675_n.jpg?stp=c0.172.1528.1528a_cp6_dst-jpg_s206x206&_nc_cat=107&ccb=1-7&_nc_sid=50ad20&_nc_ohc=3h3gUJQ7iFYQ7kNvgGMu7_K&_nc_ht=scontent.fhan14-1.fna&_nc_gid=AsK0cRT_Pe99U56NRizIBFN&oh=00_AYD2L-oFvAQhvxMAjfUKVp4WIDLvFdE1MPxEHgoeqlMPOw&oe=66ECAA8B',
+          'https://scontent.fhan14-2.fna.fbcdn.net/v/t39.30808-6/404006136_1028106088455915_9043825440596037397_n.jpg?stp=c0.169.1536.1536a_cp6_dst-jpg_s206x206&_nc_cat=108&ccb=1-7&_nc_sid=50ad20&_nc_ohc=-DeSIrV-ZBoQ7kNvgH5VdJ5&_nc_ht=scontent.fhan14-2.fna&_nc_gid=AsK0cRT_Pe99U56NRizIBFN&oh=00_AYA3sISe04lssFFC2hkoQxsWj2j1bnZ7QlEb0hJEY6Q70w&oe=66ECBB3D',
+          'https://scontent.fhan14-3.fna.fbcdn.net/v/t39.30808-6/386334842_1003700437563147_8891411433704006250_n.jpg?stp=c0.169.1536.1536a_dst-jpg_s206x206&_nc_cat=111&ccb=1-7&_nc_sid=50ad20&_nc_ohc=oGlKFQ-HMq4Q7kNvgEiD_nO&_nc_ht=scontent.fhan14-3.fna&_nc_gid=AU_t5yxC2HDEW32Dj-ZX68x&oh=00_AYCZedmiGstdS8P4fp1rNp6zMKj9HF8ZfLtrTSs839BZLw&oe=66ECC254',
+          'https://scontent.fhan14-3.fna.fbcdn.net/v/t39.30808-6/328941180_875896326907739_6566443101731331613_n.jpg?stp=c0.169.1536.1536a_dst-jpg_s206x206&_nc_cat=110&ccb=1-7&_nc_sid=50ad20&_nc_ohc=2gllea8omQsQ7kNvgGOD9_5&_nc_ht=scontent.fhan14-3.fna&_nc_gid=ArrYSGLdsXlHI01MkhmScq0&oh=00_AYAxPWtTBg-NOzs7mOcXs7n-Bc9dEAedjfg6EPeEhDbMaw&oe=66ECC9EF',
+          'https://scontent.fhan14-5.fna.fbcdn.net/v/t39.30808-6/314920019_814321883167671_8718937234973093282_n.jpg?stp=c0.169.1536.1536a_cp6_dst-jpg_s206x206&_nc_cat=106&ccb=1-7&_nc_sid=50ad20&_nc_ohc=VSkZ5VIg_u4Q7kNvgGhW6xm&_nc_ht=scontent.fhan14-5.fna&_nc_gid=A4LTaGPSs1jIsmmseoSaMPi&oh=00_AYA8Mb5cDGEGPdon5iwcZWwovc0B7RQbabZTBb-pcdKjIg&oe=66ECB68B'
+        ];
+
+        const geometry = new THREE.BoxGeometry(5, 5, 5); // Cube size
+        const materials = imageUrls.map((url) => {
+  const texture = textureLoader.load(url);
+  texture.minFilter = THREE.LinearFilter; // Sử dụng Linear Filter cho độ rõ nét
+  texture.magFilter = THREE.LinearFilter; // Hoặc có thể thử THREE.NearestFilter
+  return new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+});
+
+        const cube = new THREE.Mesh(geometry, materials);
+        scene.add(cube);
+
+        // Galaxy points
         let gu = {
           time: { value: 0 },
         };
-      
+
         let sizes = [];
         let shift = [];
         let pushShift = () => {
@@ -59,7 +73,7 @@
             Math.random() * 0.9 + 0.1
           );
         };
-        let pts = new Array(50000).fill().map((p) => {
+        let pts = new Array(50000).fill().map(() => {
           sizes.push(Math.random() * 1.5 + 0.5);
           pushShift();
           return new THREE.Vector3()
@@ -81,10 +95,11 @@
           sizes.push(Math.random() * 1.5 + 0.5);
           pushShift();
         }
-      
+
         let g = new THREE.BufferGeometry().setFromPoints(pts);
         g.setAttribute("sizes", new THREE.Float32BufferAttribute(sizes, 1));
         g.setAttribute("shift", new THREE.Float32BufferAttribute(shift, 4));
+
         let m = new THREE.PointsMaterial({
           size: 0.125,
           transparent: true,
@@ -93,68 +108,37 @@
           onBeforeCompile: (shader) => {
             shader.uniforms.time = gu.time;
             shader.vertexShader = `
-            uniform float time;
-            attribute float sizes;
-            attribute vec4 shift;
-            varying vec3 vColor;
-            ${shader.vertexShader}
-          `
-              .replace(`gl_PointSize = size;`, `gl_PointSize = size * sizes;`)
-              .replace(
-                `#include <color_vertex>`,
-                `#include <color_vertex>
-              float d = length(abs(position) / vec3(40., 10., 40));
-              d = clamp(d, 0., 1.);
-              vColor = mix(vec3(227., 155., 0.), vec3(100., 50., 255.), d) / 255.;
-            `
-              )
-              .replace(
-                `#include <begin_vertex>`,
-                `#include <begin_vertex>
-              float t = time;
-              float moveT = mod(shift.x + shift.z * t, PI2);
-              float moveS = mod(shift.y + shift.z * t, PI2);
-              transformed += vec3(cos(moveS) * sin(moveT), cos(moveT), sin(moveS) * sin(moveT)) * shift.w;
-            `
-              );
-            shader.fragmentShader = ` 
-            varying vec3 vColor;
-            ${shader.fragmentShader}
-          `
-              .replace(
-                `#include <clipping_planes_fragment>`,
-                `#include <clipping_planes_fragment>
-              float d = length(gl_PointCoord.xy - 0.5);
-              //if (d > 0.5) discard;
-            `
-              )
-              .replace(
-                `vec4 diffuseColor = vec4( diffuse, opacity );`,
-                `vec4 diffuseColor = vec4( vColor, smoothstep(0.5, 0.1, d)/* * 0.5 + 0.5*/ );`
-              );
+              uniform float time;
+              attribute float sizes;
+              attribute vec4 shift;
+              varying vec3 vColor;
+              ${shader.vertexShader}
+            `.replace(`gl_PointSize = size;`, `gl_PointSize = size * sizes;`)
+            .replace(`#include <color_vertex>`, `#include <color_vertex>
+                float phase = shift.x + time * shift.y;
+                float amp = shift.z;
+                float c = shift.w;
+                vColor = vec3(0.5 + 0.5 * cos(phase) * amp, 0.25 + 0.25 * sin(phase + 0.5) * amp, c);
+            `);
+            shader.fragmentShader = `
+              varying vec3 vColor;
+              ${shader.fragmentShader}
+            `.replace(`vec4 diffuseColor = vec4( diffuse, opacity );`, `
+                vec4 diffuseColor = vec4( vColor, opacity );
+            `);
           },
         });
-        let p = new THREE.Points(g, m);
-        p.rotation.order = "ZYX";
-        p.rotation.z = 0.2;
-        scene.add(p);
 
-        // Add sphere with image texture
-        const textureLoader = new THREE.TextureLoader();
-        const texture = textureLoader.load('https://scontent.fhan14-5.fna.fbcdn.net/v/t39.30808-6/393200555_1009318737001317_7056760070168639969_n.jpg?stp=c0.169.1535.1535a_cp6_dst-jpg_s206x206&_nc_cat=106&ccb=1-7&_nc_sid=50ad20&_nc_ohc=0nnbthx5nycQ7kNvgHclR-e&_nc_ht=scontent.fhan14-5.fna&_nc_gid=AxkMZnXA08nekUbAo03tnCx&oh=00_AYBEyWRnlRjvu7IF2hb-SwkFeeXDIEsRlMDGNks1PkYfCg&oe=66EA1867');
-        const sphereGeometry = new THREE.SphereGeometry(5, 32, 32); // Adjust the size as needed
-        const sphereMaterial = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-        const sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-        sphere.position.set(0, 0, 0); // Adjust position as needed
-        scene.add(sphere);
-      
+        let galaxy = new THREE.Points(g, m);
+        scene.add(galaxy);
+
         let clock = new THREE.Clock();
-      
+
         renderer.setAnimationLoop(() => {
           controls.update();
-          let t = clock.getElapsedTime() * 0.5;
-          gu.time.value = t * Math.PI;
-          p.rotation.y = t * 0.05;
+          cube.rotation.y += 0.01; // Rotates the cube
+          cube.rotation.x += 0.005;
+          gu.time.value += clock.getDelta();
           renderer.render(scene, camera);
         });
     </script>
